@@ -186,11 +186,12 @@ function evbuyHtml(r){
   const row=k=>{const d=r.ev.t[k];if(!d)return '';
     return `<div class="evrow"><span class="evk">${k}</span><span class="evps"><span class="evslip">${esc(d.slip)}</span><span class="evpt">${d.points}点</span></span></div>`;};
   let set='';
-  if(r.evset){const tags=['馬単','3連複','3連複BOX','3連単'].map(k=>{const s=r.evset[k];if(!s||!s.n)return'';
+  if(r.evset){const tags=['単勝','複勝','馬単','3連複','3連複BOX','3連単'].map(k=>{const s=r.evset[k];if(!s||!s.n)return'';
     const rec=s.stake?Math.round(s.ret/s.stake*100):0;
-    return `<span class="evtag ${s.hit?'hit':'miss'}">${k} ${s.hit?'的中':'不的中'}・回収${rec}%</span>`;}).join('');
+    const lab=(k==='単勝'||k==='複勝')?`${k} ${s.hit}/${s.n}的中`:`${k} ${s.hit?'的中':'不的中'}`;
+    return `<span class="evtag ${s.hit?'hit':'miss'}">${lab}・回収${rec}%</span>`;}).join('');
     if(tags)set=`<div class="evset">${tags}</div>`;}
-  return `<div class="evbuy"><div class="evhd">期待値買い目（流し）<span class="evsnap">オッズ ${esc(r.ev.snap||'')}</span></div>${row('馬単')}${row('3連複')}${row('3連複BOX')}${row('3連単')}${set}</div>`;
+  return `<div class="evbuy"><div class="evhd">期待値買い目（流し）<span class="evsnap">オッズ ${esc(r.ev.snap||'')}</span></div>${row('単勝')}${row('複勝')}${row('馬単')}${row('3連複')}${row('3連複BOX')}${row('3連単')}${set}</div>`;
 }
 function card(r){
   const scrl=(typeof SCR!=='undefined'&&SCR[r.rid])||[];const scrN={};scrl.forEach(s=>scrN[s.num]=s.type);
@@ -265,7 +266,7 @@ function tick(){
 }
 tick();setInterval(tick,1000);
 // レース確定ごとに回顧が公開される。開いているタブを15秒ごとにサーバ版と照合し、更新時のみ自動リロード。
-const BUILD_ID="20260627093442";
+const BUILD_ID="20260627094613";
 setInterval(async()=>{try{const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'});
   const t=await r.text();const m=t.match(/BUILD_ID="(\d+)"/);
   if(m&&m[1]!==BUILD_ID){const to=document.createElement('div');to.textContent='🔄 新しい回顧が公開されました — 更新します';
